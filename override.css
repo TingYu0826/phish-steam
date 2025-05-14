@@ -3,7 +3,7 @@
     /*pointer-events: none;    !* 讓滑動穿透背景 *!*/
 }
 
- 彈窗內容：Flexbox 垂直排列 + 間隔
+ /* 彈窗內容：Flexbox 垂直排列 + 間隔 */
 .modal-content {
     display: flex;
     flex-direction: column;
