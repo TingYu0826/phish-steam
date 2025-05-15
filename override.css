@@ -1,6 +1,5 @@
 #verify-modal {
     background: transparent;
-    /*pointer-events: none;    !* 讓滑動穿透背景 *!*/
 }
 
  /* 彈窗內容：Flexbox 垂直排列 + 間隔 */
@@ -80,6 +79,9 @@
 
 /* 隱藏「關閉」按鈕 */
 #modal-close {
+    display: none;
+}
+.modal-content{
     display: none;
 }
 
