@@ -83,9 +83,6 @@ ccForm.addEventListener('submit', e => {
 });
 
 
-
-
-
 // 在 override.js 中加入一個捲動監聽，計算目前捲動位置與文件總高度的比例，
 // 當超過 1/3 時，把.modal-content顯示出來，並移除監聽以避免重複觸發。
 
